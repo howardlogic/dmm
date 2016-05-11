@@ -152,6 +152,29 @@ bool ES51922::parse(const uint8_t *data, int size) {
         double mult = 1.0;
         if(data[7] & 0x08) {
                 state.mode = ModeDuty;
+                switch(data[0]) {
+                        case '0': mult = 1e-1; break;
+                        default:
+                                  DEBUG("invalid mult 0x%02X\n", data[0]);
+                                  return false;
+                                  break;
+                }
+
+        } else if(data[10] & 0x01) {
+		state.mode = ModeHZ;
+                switch(data[0]) {
+                        case '0': mult = 1e-2; break;
+                        case '1': mult = 1e-1; break;
+                        case '3': mult = 1.0; break;
+                        case '4': mult = 1e1; break;
+                        case '5': mult = 1e2; break;
+                        case '6': mult = 1e3; break;
+                        case '7': mult = 1e4; break;
+                        default:
+                                  DEBUG("invalid mult 0x%02X\n", data[0]);
+                                  return false;
+                                  break;
+                }
 
         } else switch(data[6]) {
         	case '0':
